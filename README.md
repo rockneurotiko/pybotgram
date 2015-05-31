@@ -1,6 +1,9 @@
 pybotgram
 =========
 
+
+[![](https://travis-ci.org/rockneurotiko/pybotgram.svg?branch=master)](https://travis-ci.org/rockneurotiko/pybotgram)
+
 A Telegram Bot writed in Python with plugins based in [yagop telegram-bot](https://github.com/yagop/telegram-bot) using [tg](https://github.com/vysheng/tg)
 
 
