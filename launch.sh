@@ -1,6 +1,20 @@
 #!/usr/bin/env bash
 THIS_DIR=$(cd $(dirname $0); pwd)
 RAM=`grep MemTotal /proc/meminfo | awk '{print $2}'`
+VBIN=virtualenv-3.4
+
+if ! hash $VBIN 2>/dev/null; then
+    VBIN=virtualenv3
+fi
+if ! hash $VBIN 2>/dev/null; then
+    VBIN=virtualenv
+fi
+if ! hash $VBIN 2>/dev/null; then
+    echo "You have to install virtualenv"
+    exit 1
+fi
+
+
 cd $THIS_DIR
 
 update() {
@@ -21,7 +35,7 @@ install_no_lua() {
 }
 
 install() {
-    virtualenv-3.4 env
+    $VBIN env
     source env/bin/activate
     update
     if [ $RAM -lt 307200 ]; then
