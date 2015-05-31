@@ -7,7 +7,7 @@ before_install:
   - sudo apt-get install libreadline-dev libconfig-dev libssl-dev lua5.2 liblua5.2-dev libevent-dev libjansson-dev libpython-dev make python-pip python3 libpython3-dev
   - ./launch.sh install
 
-install: "pip install -r requirements.txt"
+#install: "pip install -r requirements.txt"
 
 script:
   - python tests.py
