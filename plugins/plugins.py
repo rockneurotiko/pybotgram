@@ -2,7 +2,7 @@ from gl import settings
 from gl import utils
 
 
-def generic_cfg(data, action, defaultt=list, field='enabled_plugins', fname="data/config.p", key=None):
+def generic_cfg(data, action, defaultt=list, field='enabled_plugins', fname="data/config.json", key=None):
     cfg = utils.load_cfg(fname)  # load cfg
     plugs = cfg.get(field) or defaultt()
     if key is not None:
@@ -19,7 +19,7 @@ def generic_cfg(data, action, defaultt=list, field='enabled_plugins', fname="dat
     utils.dump_cfg(fname, cfg)
 
 
-def getOrElse(field, defaultt=list, fname='data/config.p'):
+def getOrElse(field, defaultt=list, fname='data/config.json'):
     cfg = utils.load_cfg(fname)  # load cfg
     return (cfg, cfg.get(field) or defaultt())
 

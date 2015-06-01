@@ -1,3 +1,4 @@
+cleverbot2
+six
 # Not used yet, but it will :)
 requests
-six
