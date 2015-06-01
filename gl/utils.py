@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from threading import Timer
+from threading import Timer, Thread
+from functools import wraps
 import re
 import importlib
 import collections
@@ -20,6 +21,7 @@ import pickle
 import six
 import json
 import math
+from multiprocessing import Pool
 
 USER = 1
 CHAT = 2
@@ -264,10 +266,6 @@ def is_sudo(msg):
     return isinstance(settings.SUDO_USERS, collections.Iterable) and msg.src.id in settings.SUDO_USERS
 
 
-def send_large_msg(receiver, text):
-    _send_large_msg_callback_aux(receiver, text)(True, receiver)
-
-
 def cb_rmp(path):
     def aux(success, ncb):
         print("Removing {}".format(path))
@@ -304,6 +302,10 @@ def download_to_file(path, ext):
     return file_name
 
 
+def send_large_msg(receiver, text):
+    _send_large_msg_callback_aux(receiver, text)(True, receiver)
+
+
 # If text is longer than 4096 chars, send multiple msg.
 # https://core.telegram.org/method/messages.sendMessage
 def _send_large_msg_callback_aux(receiver, text):
@@ -330,6 +332,9 @@ class dotdict(dict):
 
 
 def props(obj):
+    """
+    Convert an object in a dotdict
+    """
     pr = dotdict()
     for name in dir(obj):
         value = getattr(obj, name)
@@ -338,10 +343,81 @@ def props(obj):
     return pr
 
 
+def generic_async_callback(f, *args, **kargs):
+    """
+    Create a generic callback.
+    f: callback function
+    *args and **kargs will be parameters to call
+    ALWAYS the first parameter is the parameter of the returned value
+    """
+    def aux(res):
+        f(res, *args, **kargs)
+    return aux
+
+
+def poolit(f, cb, *args, **kargs):
+    """
+    f: Function to call asynchronously
+    cb: Callback to call with the result. This only take one parameter. Use generic_async_callback to generate a callback from a function
+    args and kargs are sended to the function
+    """
+    pool = Pool()
+    pool.apply_async(f, args, kargs, cb)
+
+
+def mp_download_to_file(path, ext, cb, *args, **kargs):
+    poolit(download_to_file, cb, path, ext)
+
+
 def delayed(seconds):
     def decorator(f):
+        @wraps(f)
         def wrapper(*args, **kargs):
             t = Timer(seconds, f, args, kargs)
             t.start()
         return wrapper
     return decorator
+
+
+# Remove this functions? MP is much better
+
+# # From http://code.activestate.com/recipes/576684-simple-threading-decorator/
+# def run_async(func):
+#     @wraps(func)
+#     def async_func(*args, **kwargs):
+#         func_hl = Thread(target=func, args=args, kwargs=kwargs)
+#         func_hl.start()
+#         return func_hl
+#     return async_func
+
+
+# def auxdasync(path, ext):
+#     _, file_name = tempfile.mkstemp("." + ext)
+#     r = requests.get(path, stream=True)
+#     total_length = r.headers.get('content-length')
+#     dl = 0
+#     with open(file_name, 'wb') as f:
+#         if total_length is None:
+#             f.write(r.content)
+#         else:
+#             total_length = int(total_length)
+#             for chunk in r.iter_content(chunk_size=1024):
+#                 if chunk:  # filter out keep-alive new chunks
+#                     print("{} / {}".format(dl * len(chunk), total_length))
+#                     dl += 1
+#                     f.write(chunk)
+#                     f.flush()
+#     return file_name
+
+
+# @run_async
+# def async_download_to_file(path, ext, cb, *args, **kargs):
+#     rpath = None
+#     try:
+#         print("Trying")
+#         rpath = auxdasync(path, ext)
+#         print("Tring2")
+#     except Exception as e:
+#         print("Error: ", e)
+#     print("Outside: ", rpath)
+#     cb(rpath, ext, *args, **kargs)
