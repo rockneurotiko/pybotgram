@@ -20,6 +20,12 @@ cd $THIS_DIR
 update() {
     git pull
     git submodule update --init --recursive
+    if [ ! -f env/bin/activate ]; then
+        echo "You need virtualenv in env directory"
+        echo "Run virtualenv-3.4 env"
+        exit 1
+    fi
+    source env/bin/activate
     pip3 install -r requirements.txt
 }
 
