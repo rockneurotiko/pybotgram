@@ -10,8 +10,8 @@ def run(msg, matches):
 
 
 __info__ = {
-    "description": "cleverbot",
-    "usage": ["!clever (text)"],
+    "description": "Cleverbot plugin.",
+    "usage": ["!clever (text): Say the text to cleverbot and receive the answer"],
     "patterns": [
         "^!clever +(.+)$",
     ],

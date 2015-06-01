@@ -19,9 +19,10 @@ Plugins
 
 | Name | Description | Usage |
 | ---- | ----------- | ----- |
-| echo.lua |	Simplest plugin ever! |	!echo [whatever]: echoes the msg |
-| help.lua | Help plugin.<br>Get info from other plugins.  | !help: Show list of plugins.<br>!help all: Show all commands for every plugin.<br>!help [plugin name]: Commands for that plugin. |
-| plugins.lua | Plugin to manage other plugins.<br>Enable, disable or reload. | !plugins: list all plugins.<br>!plugins enable [plugin]: enable plugin.<br>!plugins disable [plugin]: disable plugin.<br>!plugins disable [plugin] chat: disable plugin only this chat.<br>!plugins reload: reloads all plugins. |
+| clever.py | Cleverbot plugin. | !clever (text): Say the text to cleverbot and receive the answer |
+| echo.py |	Simplest plugin ever! |	!echo [whatever]: echoes the msg |
+| help.py | Help plugin.<br>Get info from other plugins.  | !help: Show list of plugins.<br>!help all: Show all commands for every plugin.<br>!help [plugin name]: Commands for that plugin. |
+| plugins.py | Plugin to manage other plugins.<br>Enable, disable or reload. | !plugins: list all plugins.<br>!plugins enable [plugin]: enable plugin.<br>!plugins disable [plugin]: disable plugin.<br>!plugins disable [plugin] chat: disable plugin only this chat.<br>!plugins reload: reloads all plugins. |
 
 
 Installation
