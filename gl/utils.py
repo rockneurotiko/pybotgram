@@ -113,6 +113,7 @@ def load_enabled_plugins():
 def import_plugins(paths, eplugins=set()):
     # Some magic to dynamic import and reload ^^
     plugins = settings.PLUGINS or {}
+    errored = {}
     for p in paths:
         try:
             p = p[:-3] if p.endswith('.py') else p
@@ -123,10 +124,13 @@ def import_plugins(paths, eplugins=set()):
                 m = importlib.import_module('plugins.{}'.format(p))
             plugins[p] = m
         except Exception as e:
+            errored[p] = None
             print('\033[31mError loading plugin {}\033[39m'.format(p))
             print('\033[31m{}\033[39m'.format(e))
     settings.PLUGINS = plugins
-    for p in filter(lambda x: x not in plugins, eplugins):
+    allplug = errored.copy()
+    allplug.update(plugins)
+    for p in filter(lambda x: x not in allplug, eplugins):
         print("\033[93mWarning: Plugin \"{}\" not loaded, maybe it's not in plugins directory anymore?\033[39m".format(p))
     # Old way, can't reload in that way :S
     # plgs = __import__('plugins', globals(), locals(), paths, 0)
