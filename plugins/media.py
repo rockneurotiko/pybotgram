@@ -34,7 +34,6 @@ def synchronous(url, ext, receiver):
     if not mimetype:
         return
     mime = mimetype.split('/')[0]
-    receiver = utils.get_receiver(msg)
     f = tgl.send_file
     if ext == "gif" or ext == "webp" or mime == "text":
         f = tgl.send_document
@@ -46,6 +45,22 @@ def synchronous(url, ext, receiver):
         f = tgl.send_video
     print("Sending file with mime {} from path {}".format(mimetype, path))
     f(receiver, path, utils.cb_rmp(path))
+
+
+def run(msg, matches):
+    url = matches[0]
+    ext = matches[1]
+    receiver = utils.get_receiver(msg)
+    # Using thread... It's not really good
+    # utils.async_download_to_file(url, ext, async_callback_download, receiver)
+    # Using multiprocessing
+    # First create a generic callback
+    gcb = utils.generic_async_callback(async_callback_download, ext, receiver)
+    # Then use the mp download
+    utils.mp_download_to_file(url, ext, gcb, receiver)
+
+    # Synchronous
+    # synchronous(url, ext, receiver)
 
 
 __info__ = {
