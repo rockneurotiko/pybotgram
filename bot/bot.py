@@ -226,6 +226,10 @@ def cron_plugins():
     print('yay!')
 
 
+def noop():
+    pass
+
+
 # Set callbacks
 tgl.set_on_binlog_replay_end(on_binlog_replay_end)
 tgl.set_on_get_difference_end(on_get_difference_end)
@@ -234,6 +238,7 @@ tgl.set_on_msg_receive(on_msg_receive)
 tgl.set_on_secret_chat_update(on_secret_chat_update)
 tgl.set_on_user_update(on_user_update)
 tgl.set_on_chat_update(on_chat_update)
+tgl.set_on_loop(noop)  # Make work the delayed functions :)
 
 # utils.import_plugins(utils.get_all_plugins(['test']))
 # utils.execute_plugin_function('test', 'run', '', [])
