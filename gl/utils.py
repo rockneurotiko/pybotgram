@@ -5,6 +5,11 @@ import re
 import importlib
 import collections
 import os
+import inspect
+import requests
+import tempfile
+# from urllib.parse import urlparse
+from progressbar import ProgressBar
 try:
     import tgl
 except Exception as e:
@@ -127,6 +132,7 @@ def import_plugins(paths, eplugins=set()):
             errored[p] = None
             print('\033[31mError loading plugin {}\033[39m'.format(p))
             print('\033[31m{}\033[39m'.format(e))
+    plugins = clean_disabled(plugins, eplugins)
     settings.PLUGINS = plugins
     allplug = errored.copy()
     allplug.update(plugins)
@@ -144,6 +150,15 @@ def import_plugins(paths, eplugins=set()):
     #         print('\033[31m{}\033[39m'.format(e))
     # settings.PLUGINS = plugins
     # settings.PLUGINS = {x[:-3]: getattr(plgs, x[:-3]) for x in paths}
+
+
+def clean_disabled(plugins, eplugins):
+    if len(eplugins) == 0:
+        return plugins
+    nplugs = plugins.copy()
+    for p in filter(lambda x: x not in eplugins, plugins.keys()):
+        nplugs.pop(p)
+    return nplugs
 
 
 def dump_cfg(path, data):
@@ -253,6 +268,42 @@ def send_large_msg(receiver, text):
     _send_large_msg_callback_aux(receiver, text)(True, receiver)
 
 
+def cb_rmp(path):
+    def aux(success, ncb):
+        print("Removing {}".format(path))
+        try:
+            os.remove(path)
+        except:
+            pass
+        if ncb is not None and hasattr(ncb, '__call__'):
+            ncb()
+    return aux
+
+
+def download_to_file(path, ext):
+    # Is it worth to have the same name?
+    # ppath = urlparse(path).path.split("/")
+    # ppath = ppath[-1] if len(ppath) > 0 else None
+    _, file_name = tempfile.mkstemp("." + ext)
+    r = requests.get(path, stream=True)
+    total_length = r.headers.get('content-length')
+    dl = 0
+    with open(file_name, 'wb') as f:
+        if total_length is None:
+            f.write(r.content)
+        else:
+            total_length = int(total_length)
+            pbar = ProgressBar(maxval=total_length).start()
+            for chunk in r.iter_content(chunk_size=1024):
+                if chunk:  # filter out keep-alive new chunks
+                    pbar.update(dl * len(chunk))
+                    dl += 1
+                    f.write(chunk)
+                    f.flush()
+            pbar.finish()
+    return file_name
+
+
 # If text is longer than 4096 chars, send multiple msg.
 # https://core.telegram.org/method/messages.sendMessage
 def _send_large_msg_callback_aux(receiver, text):
@@ -270,29 +321,21 @@ def _send_large_msg_callback_aux(receiver, text):
     return aux
 
 
-# If text is longer than 4096 chars, send multiple msg.
-# https://core.telegram.org/method/messages.sendMessage
-# def send_large_msg_callback(success, cb_extra, result=None):
-#     def aux(success, dest):
-#         pass
-#     text_max = 4096
-#     destination = cb_extra.get('destination')
-#     text = cb_extra.get('text')
-#     if not destination or not text:
-#         return
-#     tlen = len(text)
-#     nmsg = math.ceil(tlen / text_max)
-#     if nmsg <= 1:
-#         destination.send_msg(text, ok_cb)
-#     else:
-#         ntext = text[:text_max]
-#         rest = text[text_max:]
-#         cb_extra = {
-#             'destination': destination,
-#             'text': rest
-#         }
-#         tgl.send_msg(destination, ntext, send_large_msg_callback, cb_extra)
-#         # destination.send_msg(ntext, send_large_msg_callback, cb_extra)
+class dotdict(dict):
+    """dot.notation access to dictionary attributes"""
+    def __getattr__(self, attr):
+        return self.get(attr)
+    __setattr = dict.__setitem__
+    __delattr = dict.__delitem__
+
+
+def props(obj):
+    pr = dotdict()
+    for name in dir(obj):
+        value = getattr(obj, name)
+        if not name.startswith('__') and not inspect.ismethod(value):
+            pr[name] = value
+    return pr
 
 
 def delayed(seconds):

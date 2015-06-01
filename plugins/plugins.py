@@ -98,7 +98,6 @@ def disable_plugin_chat(name, receiver):
 
 def run(msg, matches):
     receiver = utils.get_receiver_id(msg)
-    print(matches)
     if len(matches) == 1:
         if matches[0] == "!plugins":
             return list_plugins(receiver=receiver)

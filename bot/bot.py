@@ -25,10 +25,10 @@ def on_msg_receive(msg):
     if not started:
         return
     receiver = utils.get_receiver(msg)
-
-    pp.pprint(msg)
+    # pp.pprint(msg)
     # pp.pprint(receiver)
     if msg_valid(msg):
+        msg = _internal_preproc(msg)
         msg = pre_process_msg(msg)
         if msg:
             match_plugins(msg)
@@ -40,6 +40,13 @@ def on_msg_receive(msg):
         #         msg.src.phone, msg.src.first_name, msg.src.last_name, cb)
         # elif msg.text.startswith("!testing"):
         #     tgl.get_history(receiver, 0, 10, partial(history_cb, [], receiver))
+
+
+def _internal_preproc(msg):
+    if not msg.text and msg.media:
+        msg = utils.props(msg)
+        msg.text = "[{}]".format(msg.media.get('type'))
+    return msg
 
 
 def pre_process_msg(msg):
@@ -134,7 +141,9 @@ def create_initial_cfg():
     global our_id
     oid = settings.OUR_ID if hasattr(settings, 'OUR_ID') else our_id
     cfg = {
-        'enabled_plugins': ['plugins', 'help'],
+        'enabled_plugins': ['plugins',
+                            'help',
+                            'media'],
         'sudo_users': [oid],
         'disabled_channels': []
     }
