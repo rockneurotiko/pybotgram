@@ -16,11 +16,7 @@ if ! hash $VBIN 2>/dev/null; then
     exit 1
 fi
 
-
 cd $THIS_DIR
-
-
-
 
 update() {
     git pull
