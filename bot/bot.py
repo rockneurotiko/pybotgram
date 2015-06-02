@@ -21,6 +21,7 @@ __version__ = '0.0.1'
 
 print("Python version: {}".format(sys.version))
 
+
 def on_msg_receive(msg):
     global started
     if not started:

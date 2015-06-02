@@ -30,6 +30,17 @@ update() {
     pip install -r requirements.txt
 }
 
+opt_install() {
+    if [ ! -f ./env/bin/activate ]; then
+        echo "You need virtualenv in env directory"
+        echo "Run ./launch.sh install first"
+        exit 1
+    fi
+    source env/bin/activate
+    pip install -r opt_requirements.txt
+}
+
+
 install_no_lua() {
     if [ $RAM -lt 307200 ]; then
         ./configure --disable-extf --disable-liblua && make
@@ -58,6 +69,7 @@ check_python3dev() {
     fi
 }
 
+
 install() {
     check_python3dev
     $VBIN -p python3 env
@@ -82,6 +94,8 @@ if [ "$1" = "install" ]; then
     install
 elif [ "$1" = "update" ]; then
     update
+elif [ "$1" = "optdeps" ]; then
+    opt_install
 else
     if [ ! -f ./tg/telegram.h ]; then
         echo "tg not found"

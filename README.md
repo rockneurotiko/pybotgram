@@ -20,8 +20,10 @@ Plugins
 | Name | Description | Usage |
 | ---- | ----------- | ----- |
 | clever.py | Cleverbot plugin. | !clever (text): Say the text to cleverbot and receive the answer |
+| download_media.py | When bot receives a media msg, download the media. | |
 | echo.py |	Simplest plugin ever! |	!echo [whatever]: echoes the msg |
 | help.py | Help plugin.<br>Get info from other plugins.  | !help: Show list of plugins.<br>!help all: Show all commands for every plugin.<br>!help [plugin name]: Commands for that plugin. |
+| media.py | When user sends media URL (ends with gif, mp4, pdf, etc.) download and send it to origin. | |
 | plugins.py | Plugin to manage other plugins.<br>Enable, disable or reload. | !plugins: list all plugins.<br>!plugins enable [plugin]: enable plugin.<br>!plugins disable [plugin]: disable plugin.<br>!plugins disable [plugin] chat: disable plugin only this chat.<br>!plugins reload: reloads all plugins. |
 
 
@@ -42,7 +44,22 @@ sudo apt-get install git python3 libpython3-dev python-pip python3-pip
 sudo pip3 install virtualenv
 ```
 
-Once you have all dependencies, install the bot and run it:
+- Optional dependencies:
+If you want to have all the plugins, you will have to install some more dependencies:
+```
+sudo apt-get install libtiff4-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms1-dev libwebp-dev
+./launch.sh optdeps
+```
+
+To install in other OS, see this are the libraries that need extra dependencies:
+- https://pypi.python.org/pypi/Pillow/2.1.0
+
+Plugins that you'll can't use if you don't install this optional dependencies:
+- `imgtosticker`: Use PIL (pillow)
+
+
+
+Once you have all dependencies, and the optional if you want, install the bot and run it:
 
 - bot:
 ```
@@ -50,7 +67,8 @@ cd $HOME
 git clone https://github.com/rockneurotiko/pybotgram/
 cd pybotgram
 ./launch.sh install
-./launch.sh # Will ask you for a phone number (like +cc00000000 where cc is the country code) & confirmation code.
+./launch.sh # Will ask you for a phone number & confirmation code
+# (The number is like +cc00000000 where cc is the country code)
 ```
 
 

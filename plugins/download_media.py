@@ -14,9 +14,11 @@ __info__ = {
     "description": "Plugin to download all media files to a directory.",
     "usage": ["This plugin is automatic when someone send a file."],
     "patterns": [
-        "^\[(document)\]",
-        "^\[(photo)\]",
-        "^\[(video)\]",
-        "^\[(image)\]"],
+        "^\[(photo)\]$",
+        "^\[(video)\]$",
+        "^\[(video)_thumb\]$",
+        "^\[(audio)\]$",
+        "^\[(document)\]$",
+        "^\[(document_thumb)\]$"],
     "run": run
 }

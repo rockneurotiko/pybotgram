@@ -348,11 +348,16 @@ def generic_async_callback(f, *args, **kargs):
     Create a generic callback.
     f: callback function
     *args and **kargs will be parameters to call
-    ALWAYS the first parameter is the parameter of the returned value
+    ALWAYS the first parameter will be the parameters passed to the aux function
     """
-    def aux(res):
-        f(res, *args, **kargs)
+    def aux(*args2, **kargs2):
+        newt = args2 + args
+        newk = kargs.copy()
+        newk.update(kargs2)
+        f(*newt, **newk)
     return aux
+
+gac = generic_async_callback
 
 
 def poolit(f, cb, *args, **kargs):
