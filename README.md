@@ -52,7 +52,7 @@ sudo apt-get install libtiff4-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblc
 ```
 
 To install in other OS, see this are the libraries that need extra dependencies:
-- https://pypi.python.org/pypi/Pillow/2.1.0
+- [https://pypi.python.org/pypi/Pillow/2.1.0](https://pypi.python.org/pypi/Pillow/2.1.0)
 
 Plugins that you'll can't use if you don't install this optional dependencies:
 - `imgtosticker`: Use PIL (pillow)

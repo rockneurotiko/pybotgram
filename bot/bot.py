@@ -35,13 +35,6 @@ def on_msg_receive(msg):
         if msg:
             match_plugins(msg)
             receiver.mark_read(utils.ok_gen)
-        # if msg.text.startswith("!ping"):
-        #     print("SENDING PONG")
-        #     receiver.send_msg("PONG!", msg_cb)
-        #     receiver.send_contact(
-        #         msg.src.phone, msg.src.first_name, msg.src.last_name, cb)
-        # elif msg.text.startswith("!testing"):
-        #     tgl.get_history(receiver, 0, 10, partial(history_cb, [], receiver))
 
 
 def _internal_preproc(msg):
@@ -93,17 +86,18 @@ def match_plugin(plugin, name, msg):
 
 
 def msg_valid(msg):
-    if msg.out:
+    talkoneself = settings.TALK_ONESELF if hasattr(settings, 'TALK_ONESELF') else False
+    if not talkoneself and msg.out:
         print('\033[36mNot valid: msg from us\033[39m')
-        # return False
+        return False
 
     if msg.date < now:
         print('\033[36mNot valid: old msg\033[39m')
         return False
 
-    if not msg.unread:
+    if not talkoneself and not msg.unread:
         print('\033[36mNot valid: readed\033[39m')
-        # return False
+        return False
 
     if msg.service:
         print('\033[36mNot valid: service\033[39m')
@@ -117,9 +111,9 @@ def msg_valid(msg):
         print('\033[36mNot valid: From id not provided\033[39m')
         return False
 
-    if msg.src.id == settings.OUR_ID:
+    if not talkoneself and msg.src.id == settings.OUR_ID:
         print('\033[36mNot valid: Msg from our id\033[39m')
-        # return False
+        return False
 
     if msg.dest.type == 'encr_chat':
         print('\033[36mNot valid: Encrypted chat\033[39m')
@@ -147,7 +141,8 @@ def create_initial_cfg():
                             'help',
                             'media'],
         'sudo_users': [oid],
-        'disabled_channels': []
+        'disabled_channels': [],
+        'talk_oneself': False,
     }
     if not os.path.isdir('data'):
         os.mkdir('data')
