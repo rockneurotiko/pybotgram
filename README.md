@@ -71,4 +71,4 @@ The privileged users are identified with his telegram ID, and you can write all 
 
 Contact me
 ------------
-You can contact me [via Telegram](https://telegram.me/rockneurotiko) but if you have an issue please [open](https://github.com/rockneurotiko/pybotgram/issues) one.
+You can contact me [via Telegram](https://telegram.me/rock_neurotiko) but if you have an issue please [open](https://github.com/rockneurotiko/pybotgram/issues) one.
