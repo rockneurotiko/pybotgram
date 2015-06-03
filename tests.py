@@ -2,7 +2,7 @@ import importlib
 import shutil
 import os
 # Copy the mock and import it
-if os.path.isdir('tgl.pyc'):
+if os.path.isfile('tgl.pyc'):
     shutil.os.remove('tgl.pyc')
 shutil.copy('mock/tgl.py', '.')
 import tgl
@@ -41,7 +41,7 @@ def check_plugins():
     return res
 
 res = check_plugins()
-if os.path.isdir('tgl.pyc'):
+if os.path.isfile('tgl.pyc'):
     shutil.os.remove('tgl.pyc')
 shutil.os.remove('./tgl.py')
 

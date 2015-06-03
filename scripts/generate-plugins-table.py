@@ -10,9 +10,9 @@ shutil.copy('mock/tgl.py', '.')
 
 
 def safe_exit(code=0):
-    if os.path.isdir('tgl.pyc'):
+    if os.path.isfile('tgl.pyc'):
         shutil.os.remove('tgl.pyc')
-    if os.path.isdir('tgl.py'):
+    if os.path.isfile('tgl.py'):
         shutil.os.remove('./tgl.py')
     exit(code)
 
