@@ -74,7 +74,7 @@ m2 = re.search(reg2, readmetext)
 if not (m1 and m2):
     print("There have some problem reading README.md, here have your plugins information to copy and paste manually:")
     print(text)
-    exit(1)
+    safe_exit(1)
 
 oldtext = readmetext[m1.end():m2.start()]
 
@@ -83,7 +83,7 @@ textcmp2 = re.search(reg3, text, re.DOTALL)
 
 if (textcmp1 and textcmp2) and textcmp1.group(0) == textcmp2.group(0):
     print("You already have the last plugins in README.md! ^^")
-    exit(0)
+    safe_exit()
 
 print("I'm going to replace this text:\n------\n{}\n------\nFor this\n-----\n{}\n-----\n".format(oldtext, text))
 resinput = input("If you want to make this changes, answer (Y): ")
@@ -96,3 +96,5 @@ if resinput == "Y":
     print("The text had been replaced!")
 else:
     print("The text won't be replaced!")
+
+safe_exit()
