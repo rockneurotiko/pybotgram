@@ -4,7 +4,7 @@ def run(msg, matches):
 
 
 __info__ = {
-    "description": "Simplest plugin and example :)",
+    "description": "Simplest plugin ever!",
     "usage": ["!echo (text)"],
     "patterns": [
         "^!echo +(.+)$",

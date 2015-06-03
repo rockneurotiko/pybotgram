@@ -11,7 +11,7 @@ def run(msg, matches):
 
 
 __info__ = {
-    "description": "Plugin to download all media files to a directory.",
+    "description": "When bot receives a media msg, download the media to the file system.",
     "usage": ["This plugin is automatic when someone send a file."],
     "patterns": [
         "^\[(photo)\]$",

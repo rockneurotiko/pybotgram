@@ -43,7 +43,7 @@ def run(msg, matches):
 
 
 __info__ = {
-    "description": "Help plugin. Get info from other plugins.",
+    "description": ["Help plugin.", "Get info from other plugins."],
     "usage": ["!help: Show list of plugins.",
               "!help all: Show all commands for every plugin.",
               "!help [plugin name]: Commands for that plugin."],

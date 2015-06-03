@@ -118,7 +118,7 @@ def run(msg, matches):
 
 
 __info__ = {
-    "description": "Plugin to manage other plugins. Enable, disable or reload.",
+    "description": ["Plugin to manage other plugins", "Enable, disable or reload."],
     "usage": ["!plugins: list all plugins.",
               "!plugins enable [plugin]: enable plugin.",
               "!plugins disable [plugin]: disable plugin.",
