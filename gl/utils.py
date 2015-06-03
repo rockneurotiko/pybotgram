@@ -59,6 +59,13 @@ def ok_gen(*args):
     pass
 
 
+def get_safe_setting(name, default=dict):
+    name = name.upper()  # Settings always in upper case!
+    if not hasattr(settings, name):
+        setattr(settings, name, default())
+    return getattr(settings, name)
+
+
 def get_all_plugins(pluginsloaded=(), ignore=True):
     return [f for f in os.listdir('plugins')
             if os.path.isfile(os.path.join('plugins', f)) and
@@ -71,10 +78,11 @@ def clean_plugins(plugins):
     return [x[:-3] for x in plugins if not x.startswith("__init__")]
 
 
-def reload_cfg_plugins():
+def reload_cfg_plugins(prop='enabled_plugins'):
     cfg = load_cfg('data/config.json')
-    nplugs = cfg.get('enabled_plugins') or ()
-    oplugs = settings.ENABLED_PLUGINS
+    nplugs = cfg.get(prop) or ()
+    oplugs = getattr(settings, prop.upper()) if hasattr(settings, prop.upper()) else ()
+    # oplugs = settings.ENABLED_PLUGINS
     diff1 = all(map(lambda x: x in oplugs, nplugs))
     diff2 = all(map(lambda x: x in nplugs, oplugs))
     if not diff1 or not diff2:
@@ -92,6 +100,29 @@ def plugin_exists(name):
     return name in clean_plugins(get_all_plugins())
 
 
+def generic_cfg(data, action, defaultt=list, field='enabled_plugins', fname="data/config.json", key=None):
+    cfg = load_cfg(fname)  # load cfg
+    plugs = cfg.get(field) or defaultt()
+    if key is not None:
+        if not plugs.get(key):
+            plugs[key] = type(data)()
+        if not hasattr(plugs[key], action):
+            return
+        try:
+            getattr(plugs[key], action)(data)
+        except:
+            pass
+    else:
+        if not hasattr(plugs, action):
+            return
+        try:
+            getattr(plugs, action)(data)
+        except:
+            pass
+    cfg[field] = plugs
+    dump_cfg(fname, cfg)
+
+
 def save_cfg_settings(cfg):
     if type(cfg) is not dict:
         return
@@ -99,7 +130,7 @@ def save_cfg_settings(cfg):
     settings.ALL_PLUGINS = clean_plugins(get_all_plugins())
     settings.ENABLED_PLUGINS = cfg.get('enabled_plugins') or ()
     settings.SUDO_USERS = cfg.get('sudo_users') or ()
-    settings.DISABLED_CHANNELS = cfg.get('disabled_channels') or ()
+    settings.DISABLED_CHANNELS = cfg.get('disabled_channels') or set()
     for k, v in cfg.items():
         if k.lower() in defaults: continue
         setattr(settings, k.upper(), v)

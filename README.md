@@ -20,6 +20,7 @@ Plugins
 | Name | Description | Usage |
 | ---- | ----------- | ----- |
 | calc.py | A calculator to evaluate expressions | !calc (expression) |
+| channels.py | Plugin to manage channels.<br>Enable or disable channel. | !channel enable: enable current channel<br>!channel disable: disable current channel |
 | clever.py | Cleverbot plugin. | !clever (text): Say the text to cleverbot and receive the answer |
 | download_media.py | When bot receives a media msg, download the media to the file system. | This plugin is automatic when someone send a file. |
 | echo.py | Simplest plugin ever! | !echo (text) |
