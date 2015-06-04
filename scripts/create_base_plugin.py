@@ -119,8 +119,8 @@ name = ask_until("What will be your plugin name?", "Sorry, plugin name \"{}\" is
 
 description = ask_for_n("Write the description for your the plugin \"{}\":".format(name))[:-1]
 
-longd = len(description) > 1
-description = '"{}"'.format(description[0]) if not longd else '",\n{}"'.format(sp8).join(description)
+longd = len(description) > 0
+description = '""' if not longd else '",\n{}"'.format(sp8).join(description)
 if longd:
     description = "[\n{}\"{}\"]".format(sp8, description)
 

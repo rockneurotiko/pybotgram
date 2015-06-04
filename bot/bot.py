@@ -26,6 +26,7 @@ def on_msg_receive(msg):
     global started
     if not started:
         return
+    talkoneself = settings.TALK_ONESELF if hasattr(settings, 'TALK_ONESELF') else False
     receiver = utils.get_receiver(msg)
     # pp.pprint(msg)
     # pp.pprint(receiver)
@@ -34,7 +35,8 @@ def on_msg_receive(msg):
         msg = pre_process_msg(msg)
         if msg:
             match_plugins(msg)
-            receiver.mark_read(utils.ok_gen)
+            if not talkoneself:  # Only mark as read if we don't let us talk to ourself (means that we are the bot)
+                receiver.mark_read(utils.ok_gen)
 
 
 def _internal_preproc(msg):
