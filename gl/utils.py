@@ -405,6 +405,14 @@ def mp_download_to_file(path, ext, cb, *args, **kargs):
     poolit(download_to_file, cb, path, ext)
 
 
+def mp_requests(mode, path, cb, params=None):
+    kargs = {"params": params} if params is not None else {}
+    if not hasattr(requests, mode.lower()):
+        return
+    f = getattr(requests, mode.lower())
+    poolit(f, cb, path, **kargs)
+
+
 def delayed(seconds):
     def decorator(f):
         @wraps(f)
