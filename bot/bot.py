@@ -8,6 +8,7 @@ BOTPATH = os.path.realpath(os.path.abspath('.'))
 sys.path.append(BOTPATH)
 from gl import settings
 from gl import utils
+import uxserver
 
 
 our_id = 0
@@ -239,9 +240,6 @@ tgl.set_on_user_update(on_user_update)
 tgl.set_on_chat_update(on_chat_update)
 tgl.set_on_loop(noop)  # Make work the delayed functions :)
 
-# utils.import_plugins(utils.get_all_plugins(['test']))
-# utils.execute_plugin_function('test', 'run', '', [])
-# utils.execute_plugin_function('test', 'run', '', [])
-# utils.execute_plugin_function('test', 'run', '', [])
-# utils.execute_plugin_function('test', 'run', '', [])
-# utils.execute_plugin_function('test', 'run', '', [])
+# Socket file :)
+sock = uxserver.create_connection()
+uxserver.handle_listen(sock)

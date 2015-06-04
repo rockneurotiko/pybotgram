@@ -425,14 +425,14 @@ def delayed(seconds):
 
 # Remove this functions? MP is much better
 
-# # From http://code.activestate.com/recipes/576684-simple-threading-decorator/
-# def run_async(func):
-#     @wraps(func)
-#     def async_func(*args, **kwargs):
-#         func_hl = Thread(target=func, args=args, kwargs=kwargs)
-#         func_hl.start()
-#         return func_hl
-#     return async_func
+# From http://code.activestate.com/recipes/576684-simple-threading-decorator/
+def run_async(func):
+    @wraps(func)
+    def async_func(*args, **kwargs):
+        func_hl = Thread(target=func, args=args, kwargs=kwargs)
+        func_hl.start()
+        return func_hl
+    return async_func
 
 
 # def auxdasync(path, ext):
