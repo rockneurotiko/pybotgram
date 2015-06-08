@@ -297,6 +297,10 @@ def is_sudo(msg):
     return isinstance(settings.SUDO_USERS, collections.Iterable) and msg.src.id in settings.SUDO_USERS
 
 
+def is_chat_msg(msg):
+    return msg.dest.type == CHAT
+
+
 def cb_rmp(path):
     def aux(success, ncb):
         print("Removing {}".format(path))
@@ -368,9 +372,12 @@ def props(obj):
     """
     pr = dotdict()
     for name in dir(obj):
-        value = getattr(obj, name)
-        if not name.startswith('__') and not inspect.ismethod(value):
-            pr[name] = value
+        try:
+            value = getattr(obj, name)
+            if not name.startswith('__') and not inspect.ismethod(value):
+                pr[name] = value
+        except:
+            continue
     return pr
 
 
