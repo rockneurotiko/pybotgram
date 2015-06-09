@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from threading import Timer, Thread
+from threading import Timer  # , Thread
 from functools import wraps
 import re
 import importlib
@@ -9,6 +9,7 @@ import os
 import inspect
 import requests
 import tempfile
+from colorclass import Color
 # from urllib.parse import urlparse
 from progressbar import ProgressBar
 try:
@@ -152,25 +153,38 @@ def import_plugins(paths, eplugins=set()):
     # Some magic to dynamic import and reload ^^
     plugins = settings.PLUGINS or {}
     errored = {}
-    for p in paths:
+    cbase = Color('{green}{}{cyan}')
+    plugins_table = [[Color('{yellow}Plugin{/yellow}{cyan}'), Color('{yellow}State{/yellow}{cyan}')]]
+    # print(Color("{green}--------\nLet's load the plugins enabled!\n--------{/green}"))
+    for p in sorted(paths):
         try:
             p = p[:-3] if p.endswith('.py') else p
-            print("Loading plugin: {}".format(p))
+            # print(Color("{green}Loading plugin: {}{/green}").format(p))
             if plugins.get(p):
                 m = importlib.reload(plugins[p])
             else:
                 m = importlib.import_module('plugins.{}'.format(p))
             plugins[p] = m
+            plugins_table.append([cbase.format(p), cbase.format(emojis["ok"])])
         except Exception as e:
             errored[p] = None
-            print('\033[31mError loading plugin {}\033[39m'.format(p))
-            print('\033[31m{}\033[39m'.format(e))
+            text = Color("{red}Error loading plugin \"{}\". Reason: {}{/red}{cyan}").format(p, e)
+            plugins_table.append([cbase.format(p), text])
+            # print(text)
+            # print('{}Error loading plugin {}. Reason:'.format(Fore.RED, p))
+            # print('{}\t{}'.format(Fore.RED, e))
     plugins = clean_disabled(plugins, eplugins)
     settings.PLUGINS = plugins
     allplug = errored.copy()
     allplug.update(plugins)
     for p in filter(lambda x: x not in allplug, eplugins):
-        print("\033[93mWarning: Plugin \"{}\" not loaded, maybe it's not in plugins directory anymore?\033[39m".format(p))
+        text = Color("{yellow}Warning: Plugin \"{}\" not loaded, maybe it's not in plugins directory anymore?{/yellow}{cyan}").format(p)
+        plugins_table.append([p, text])
+        print(text)
+    from terminaltables import AsciiTable, UnixTable
+    # print(AsciiTable(plugins_table).table)
+    print(Color('{cyan}') + UnixTable(plugins_table).table)
+
     # Old way, can't reload in that way :S
     # plgs = __import__('plugins', globals(), locals(), paths, 0)
     # plugins = {}

@@ -4,6 +4,7 @@ from functools import partial
 import sys
 import os
 import datetime
+from colorclass import Color
 BOTPATH = os.path.realpath(os.path.abspath('.'))
 sys.path.append(BOTPATH)
 from gl import settings
@@ -19,7 +20,7 @@ started = False
 
 __version__ = '0.0.1'
 
-print("Python version: {}".format(sys.version))
+print(Color("{cyan}Python version: {}{/cyan}").format(sys.version))
 
 
 def on_msg_receive(msg):
@@ -155,6 +156,8 @@ def create_initial_cfg():
 def on_binlog_replay_end():
     global started
     started = True
+    if not settings.REDIS_INS:
+        print(Color("{red}Redis library is not installed.{/red}"))
     config = load_config()
     utils.save_cfg_settings(config)
     handle_sudoers(config)
@@ -165,7 +168,7 @@ def on_binlog_replay_end():
 def handle_sudoers(cfg):
     suds = cfg.get('sudo_users') or (0,)
     for s in suds:
-        print("Allowed sudo user: {}".format(s))
+        print(Color("{green}Allowed sudo user: {magenta}{}").format(s))
 
 
 def on_get_difference_end():
@@ -176,7 +179,7 @@ def on_our_id(id):
     global our_id
     our_id = id
     settings.OUR_ID = id
-    return "Set ID: " + str(our_id)
+    return Color("{green}Setted Bot ID: {}").format(str(our_id))
 
 
 def msg_cb(success, msg):

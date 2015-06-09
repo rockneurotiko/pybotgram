@@ -2,3 +2,5 @@ cleverbot2
 six
 requests
 progressbar2
+colorclass
+terminaltables

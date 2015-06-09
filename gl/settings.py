@@ -1,3 +1,8 @@
+try:
+    import redis
+    REDIS_INS = True
+except ImportError:
+    REDIS_INS = False
 
 # Global variables
 
