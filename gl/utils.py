@@ -12,6 +12,7 @@ import tempfile
 from colorclass import Color
 # from urllib.parse import urlparse
 from progressbar import ProgressBar
+from terminaltables import AsciiTable, UnixTable
 try:
     import tgl
 except Exception as e:
@@ -154,12 +155,10 @@ def import_plugins(paths, eplugins=set()):
     plugins = settings.PLUGINS or {}
     errored = {}
     cbase = Color('{green}{}{cyan}')
-    plugins_table = [[Color('{yellow}Plugin{/yellow}{cyan}'), Color('{yellow}State{/yellow}{cyan}')]]
-    # print(Color("{green}--------\nLet's load the plugins enabled!\n--------{/green}"))
+    plugins_table = [[Color('{yellow}Name{/yellow}{cyan}'), Color('{yellow}State{/yellow}{cyan}')]]
     for p in sorted(paths):
         try:
             p = p[:-3] if p.endswith('.py') else p
-            # print(Color("{green}Loading plugin: {}{/green}").format(p))
             if plugins.get(p):
                 m = importlib.reload(plugins[p])
             else:
@@ -170,20 +169,19 @@ def import_plugins(paths, eplugins=set()):
             errored[p] = None
             text = Color("{red}Error loading plugin \"{}\". Reason: {}{/red}{cyan}").format(p, e)
             plugins_table.append([cbase.format(p), text])
-            # print(text)
-            # print('{}Error loading plugin {}. Reason:'.format(Fore.RED, p))
-            # print('{}\t{}'.format(Fore.RED, e))
     plugins = clean_disabled(plugins, eplugins)
     settings.PLUGINS = plugins
     allplug = errored.copy()
     allplug.update(plugins)
     for p in filter(lambda x: x not in allplug, eplugins):
         text = Color("{yellow}Warning: Plugin \"{}\" not loaded, maybe it's not in plugins directory anymore?{/yellow}{cyan}").format(p)
-        plugins_table.append([p, text])
-        print(text)
-    from terminaltables import AsciiTable, UnixTable
+        plugins_table.append([cbase.format(p), text])
     # print(AsciiTable(plugins_table).table)
-    print(Color('{cyan}') + UnixTable(plugins_table).table)
+    ttable = UnixTable(plugins_table)
+    ttable.title = Color('{magenta} Plugins {/magenta}{cyan}')
+    ttable.inner_row_border = False
+    ttable.justify_columns = {0: 'center', 1: 'center'}
+    print(Color('{cyan}') + ttable.table + Color('{/cyan}'))
 
     # Old way, can't reload in that way :S
     # plgs = __import__('plugins', globals(), locals(), paths, 0)

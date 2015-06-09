@@ -5,6 +5,11 @@ import sys
 import os
 import datetime
 from colorclass import Color
+try:
+    import redis
+except:
+    print(Color("{red}Redis library is not installed.{/red}"))
+    pass
 BOTPATH = os.path.realpath(os.path.abspath('.'))
 sys.path.append(BOTPATH)
 from gl import settings
@@ -156,8 +161,7 @@ def create_initial_cfg():
 def on_binlog_replay_end():
     global started
     started = True
-    if not settings.REDIS_INS:
-        print(Color("{red}Redis library is not installed.{/red}"))
+    check_and_set_redis()
     config = load_config()
     utils.save_cfg_settings(config)
     handle_sudoers(config)
@@ -165,10 +169,21 @@ def on_binlog_replay_end():
     cron_plugins()
 
 
+def check_and_set_redis():
+    try:
+        r = redis.StrictRedis(host='localhost', port=6379, db=0)
+        r.ping()  # See if redis server is up!
+        settings.REDIS = r
+        print(Color("{green}Redis is configured and up correctly <3{/green}"))
+    except:
+        settings.REDIS = None
+        print(Color("{red}Seems that you don't have the instance of redis up, some plugins may not work, check the github project.{/red}"))
+
+
 def handle_sudoers(cfg):
     suds = cfg.get('sudo_users') or (0,)
     for s in suds:
-        print(Color("{green}Allowed sudo user: {magenta}{}").format(s))
+        print(Color("{green}Allowed sudo user: {magenta}{}{/magenta}").format(s))
 
 
 def on_get_difference_end():
@@ -179,7 +194,7 @@ def on_our_id(id):
     global our_id
     our_id = id
     settings.OUR_ID = id
-    return Color("{green}Setted Bot ID: {}").format(str(our_id))
+    return Color("{green}Setted Bot ID: {magenta}{}{/magenta}").format(str(our_id))
 
 
 def msg_cb(success, msg):
